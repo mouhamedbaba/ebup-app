@@ -49,7 +49,7 @@ def lire_livre(rep):
 
     # Afficher la table des matières
     for item in toc:
-        print(item[0])
+        print(item.title)
 
     # Demander à l'utilisateur de choisir un chapitre
     chapitre = int(input("Choisir un chapitre (1 - " + str(len(toc)) + ") :"))

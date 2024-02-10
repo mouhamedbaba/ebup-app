@@ -29,12 +29,13 @@ class Application(tk.Frame):
         self.content_text = tk.Text(self, height=20, width=50)
         self.content_text.pack()
 
+
     def show_content(self):
         book_file = self.books_combobox.get()
         chapter_number = self.chapters_combobox.get()
         
         # Répertoire contenant les livres ePub
-        rep = "livres"
+        rep = "livres/"
 
         # Lire le livre ePub
         livres = [f for f in os.listdir(rep) if f.endswith('.epub')]
@@ -53,17 +54,34 @@ class Application(tk.Frame):
         print("Auteur :", book.get_metadata('DC', 'creator')[0][0])
 
         # Récupérer la table des matières
-        toc = book.get_toc()
+        toc = book.toc
 
         # Afficher la table des matières
         for item in toc:
-            print(item[0])
+            print(item.title)
 
         # Demander à l'utilisateur de choisir un chapitre
         chapitre = int(input("Choisir un chapitre (1 - " + str(len(toc)) + ") :"))
+        print(f"chapitre  : {chapitre}")
+        print(f"chapitre  - 1: {chapitre - 1}")
+        
+        if 1 <= chapitre <= len(toc):
+            # Récupérer le contenu du chapitre choisi
+            print(f"toc chap - 1 : {toc[chapitre - 1]}")
+            chapitre_item = book.get_item_with_href(toc[chapitre].href)
+            print(f"chapiter item : {chapitre_item}")
+            content = chapitre_item.get_content()  # Décodez le contenu en UTF-8
+            
+            print(f"chapiter content : {content}")
+            
+
+            self.content_text.delete("1.0", tk.END)  # Effacer le texte précédent
+            self.content_text.insert("1.0", content)
+        else:
+            print("Numéro de chapitre invalide.")
 
         # Récupérer le contenu du chapitre choisi
-        chapitre_item = book.get_item_with_href(toc[chapitre - 1][1])
+        chapitre_item = book.get_item_with_href(toc)
         content = chapitre_item.get_content()
 
 
